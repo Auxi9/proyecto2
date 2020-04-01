@@ -1,0 +1,3 @@
+django-jet
+six
+django-rest-framework

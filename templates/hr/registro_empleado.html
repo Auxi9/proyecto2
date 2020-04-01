@@ -1,0 +1,213 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+{% load i18n %}
+{% block title %}Demo | FE{% endblock %}
+{% block extrahead %}
+    <link rel="stylesheet" type="text/css" href="/static/admin/css/forms.css">
+    <link rel="stylesheet" type="text/css" href="/static/estilos.css">
+    <script src="{% static "js/jquery-3.4.1.min.js" %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery.init.js' %} "></script>
+    <script type="text/javascript" src="{% static 'js/sweetalert2.min.js' %} "></script>
+{% endblock %}
+{% block branding %}
+    <h1 id="site-name"><a href="{% url 'admin:index' %}">Ferretería Porvenir - Panel de control</a></h1>
+{% endblock %}
+{% block breadcrumbs %}
+    <div class="breadcrumbs">
+        <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a> ›
+        {% if title %} &rsaquo; {{ title }}{% endif %}
+            › Demo
+    </div>
+{% endblock %}
+{% block usertools %}
+    <div id="user-tools">
+        {% block welcome-msg %}
+            {% trans 'Bienvenido,' %}
+            <strong>{% firstof user.get_short_name user.get_username %}</strong>.
+        {% endblock %}
+        {% block userlinks %}
+            {% if site_url %}
+                <a href="{{ site_url }}">{% trans 'View site' %}</a> /
+            {% endif %}
+            {% if user.is_active and user.is_staff %}
+                {% url 'django-admindocs-docroot' as docsroot %}
+                {% if docsroot %}
+                    <a href="{{ docsroot }}">{% trans 'Documentation' %}</a> /
+                {% endif %}
+            {% endif %}
+            {% if user.has_usable_password %}
+            <a href="{% url 'admin:password_change' %}">{% trans 'Change password' %}</a> /
+            {% endif %}
+            <a href="{% url 'admin:logout' %}">{% trans 'Log out' %}</a>
+        {% endblock %}
+    </div>
+{% endblock %}
+{% block nav-global %}{% endblock %}
+    {% block messages %}
+        {% if messages %}
+        <ul class="messagelist">{% for message in messages %}
+          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message|capfirst }}</li>
+        {% endfor %}</ul>
+        {% endif %}
+    {% endblock messages %}
+{% block content %}
+    <table style="width: 100%">
+    {% csrf_token %}
+        <tbody>
+            <tr>
+                <td>Username</td>
+                <td> <input type="text" id="use" class="input80" >  </td>
+            </tr>
+             <tr>
+                <td>Contraseña</td>
+                <td> <input type="password" id="con" class="input80" >  </td>
+            </tr>
+            <tr>
+                <td>Nombre</td>
+                <td> <input type="text" id="nom" class="input80" >  </td>
+            </tr>
+              <tr>
+                <td>Apellido</td>
+                <td> <input type="text" id="ape" class="input80" >  </td>
+            </tr>
+            <tr>
+                <td>Género</td>
+                <td>
+                    <select name="genero" id="genero">
+                        {% for clave, valor in generos %}
+                            <option value="{{ clave }}">{{ valor }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+             <tr>
+                <td>Dirección</td>
+                <td> <input type="text" id="dir" class="input80" >  </td>
+            </tr>
+            <tr>
+                <td>Ciudad</td>
+                <td> <input type="text" id="ciu" class="input80">  </td>
+            </tr>
+             <tr>
+                <td>Telefono</td>
+                <td> <input type="number" id="tel" class="input80">  </td>
+            </tr>
+             <tr>
+                <td>Email</td>
+                <td> <input type="email" id="email" class="input80">  </td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="submit-row">
+        <input onclick="ejecutar()" type="submit" class="default" value="Aceptar" style="cursor: pointer">
+    </div>
+
+    <script>
+        const $ = django.jQuery;
+
+        function ejecutar() {
+            let username = $("#use").val().trim();
+            let contrasenha = $("#con").val();
+            let nombre = $("#nom").val().trim();
+            let apellido = $("#ape").val().trim();
+            let direccion = $("#dir").val().trim();
+            let ciudad = $("#ciu").val().trim();
+            let telefono = $("#tel").val().trim();
+            let email = $("#email").val().trim();
+
+            if (username.length === 0) {
+                Sweetalert2.fire({
+                    type: 'error',
+                    title: 'Revise los datos',
+                    text: 'Debe completar el username'
+                });
+                return;
+            }else if (contrasenha.length === 0){
+                Sweetalert2.fire({
+                    type: 'error',
+                    title: 'Revise los datos',
+                    text: 'Debe completar la contraseña'
+                });
+                return;
+            }else if (nombre.length === 0){
+                Sweetalert2.fire({
+                    type: 'error',
+                    title: 'Revise los datos',
+                    text: 'Debe completar el nombre'
+                });
+                return;
+            } else if (ciudad.length === 0) {
+                Sweetalert2.fire({
+                    type: 'error',
+                    title: 'Revise los datos',
+                    text: 'Debe completar la ciudad'
+                });
+                return;
+            } else if (apellido.length === 0){
+                Sweetalert2.fire({
+                    type: 'error',
+                    title: 'Revise los datos',
+                    text: 'Debe completar el apellido'
+                });
+                return;
+            } else if (direccion.length === 0){
+                Sweetalert2.fire({
+                    type: 'error',
+                    title: 'Revise los datos',
+                    text: 'Debe completar la dirección'
+                });
+                return;
+            } else if (telefono.length === 0){
+                Sweetalert2.fire({
+                    type: 'error',
+                    title: 'Revise los datos',
+                    text: 'Debe completar el telefono'
+                });
+                return;
+            } else if (email.length === 0 ){
+                Sweetalert2.fire({
+                    type: 'error',
+                    title: 'Revise los datos',
+                    text: 'Debe completar el email'
+                });
+                return;
+            }
+
+
+            $.ajax({
+                type: "POST",
+                dataType : "json",
+                data: {
+                    csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                    username: username,
+                    contrasenha: contrasenha,
+                    nombre: nombre,
+                    apellido: apellido,
+                    direccion: direccion,
+                    ciudad: ciudad,
+                    telefono: telefono,
+                    email: email
+                },
+                success: function (data) {
+                    Sweetalert2.fire({
+                          type: 'success',
+                          title: 'EJECUTADO EXITOSAMENTE'
+                        })//.then((result) => {});
+
+                    hideSpin();
+                },
+                error: function (error) {
+                    Sweetalert2.fire({
+                          type: 'error',
+                          title: 'Error al añadir nuevo empleado',
+                          text: error.responseJSON.error
+                        });
+
+                    hideSpin();
+                },
+            });
+
+        }
+
+    </script>
+{% endblock %}

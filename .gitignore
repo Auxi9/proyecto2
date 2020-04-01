@@ -1,0 +1,62 @@
+# .gitignore
+# Project files and directories
+#/atributos/local_settings.py
+#/fashion/static/
+#/myproject/tmp/
+#/myproject/media/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.sqlite3
+*.pyc
+# C extensions
+*.so
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+
+# Translations
+*.pot
+
+# Django stuff:
+*.log
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+sendgrid\.env
+sendgrid.env
+productos/*
+caja/migrations/*
+crm/migrations/*
+proveedor/migrations/*
+stock/migrations/*
+venta/migrations/*
+nohup.out
+.idea/fashionware\.iml
+\.idea/misc\.xml
+.idea/workspace.xml
+.idea/encondings.xml
+.idea/*
+
+*.pdf

@@ -1,0 +1,67 @@
+{% extends "admin/base_site.html" %}
+{% load static i18n %}
+
+{% block extrahead %}
+    <link rel="shortcut icon" type="image/png" href=""/>
+{% endblock %}
+
+{% block title %}{{ title }} |  FERRETERÍA PORVENIR{% endblock %}
+
+
+{% block extrastyle %}
+    <div class="spin" id="spinner">
+        <div id="loading"></div>
+    </div>
+    <style>
+            #loading {
+              display: inline-block;
+              width: 50px;
+              height: 50px;
+              border: 20px solid #4176907a;
+              border-radius: 50%;
+              border-top-color: #417690;
+              animation: spin 1s ease-in-out infinite;
+              -webkit-animation: spin 1s ease-in-out infinite;
+              margin-top: -100px;
+            }
+
+            @keyframes spin {
+              to { -webkit-transform: rotate(360deg); }
+            }
+            @-webkit-keyframes spin {
+              to { -webkit-transform: rotate(360deg); }
+            }
+            .spin{
+                height: 100vh;
+                width: 100vw;
+                position: fixed;
+                z-index: 5000;
+                background: #ffffff7a;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                top: 0 !important;
+                left: 0 !important;
+            }
+        </style>
+    <script>
+        document.onreadystatechange = function () {
+            if (document.readyState === "complete") {
+                document.getElementById("spinner").style.display = "none";
+            } else {
+                document.getElementById("spinner").style.display = "flex";
+            }
+        };
+        try {
+           document.querySelector("form").addEventListener("submit", function(e){
+            document.getElementById("spinner").style.display = "flex";
+        });
+        } catch (e) {}
+        function showSpin() {
+            document.getElementById("spinner").style.display = "flex";
+        }
+        function hideSpin() {
+            document.getElementById("spinner").style.display = "none";
+        }
+    </script>
+{% endblock %}
