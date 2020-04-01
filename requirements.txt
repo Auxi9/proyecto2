@@ -1,5 +1,6 @@
-django-jet
 six
+Django
+django-jet
 django-rest-framework
 gunicorn
 whitenoise==3
