@@ -1,7 +1,7 @@
-six
-Django
-django-jet
-django-rest-framework
+Django==2.2
 gunicorn
 whitenoise==3
 psycopg2-binary
+django-jet
+django-rest-framework
+gunicorn
