@@ -138,6 +138,20 @@ MEDIA_ROOT = (BASE_DIR)
 
 MEDIA_URL = '/media/'
 
+CORS_ORIGIN_ALLOW_ALL = True
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+SECURE_SSL_REDIRECT = True
+
+SESSION_COOKIE_SECURE = True
+
+CSRF_COOKIE_SECURE = True
+
+#CSRF_COOKIE_DOMAIN = 'boutiquestyle-dev.herokuapp.com'
+
+CSRF_TRUSTED_ORIGINS = ['*', 'localhost:8000']
+
 JET_DEFAULT_THEME = 'green'
 JET_THEMES = [
     {
