@@ -5,3 +5,4 @@ psycopg2-binary
 django-jet
 django-rest-framework
 gunicorn
+django-sslserver

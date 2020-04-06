@@ -23,6 +23,7 @@ from crm.models import *
 from crm.admin import *
 from caja.models import *
 from caja.admin import *
+from caja.views import *
 from proveedor.models import *
 from proveedor.admin import *
 from venta.models import *
@@ -53,10 +54,8 @@ admin.site.register(Empleado, EmpleadoAdmin)
 
 
 urlpatterns = [
-    url(r'^admin/hr/empleado/add/$', RegistrarEmpleado.as_view(),
-        name='empleado_add'),
-    url(r'^admin/hr/empleado/$', RegistroEmpleado.as_view(),
-        name='empleado_add'),
+    url(r'^admin/hr/empleado/add/$', RegistroEmpleado.as_view(), name='empleado_add'),
+    url(r'^admin/caja/caja/add/$', AperturaCaja.as_view(), name='caja_abrir'),
     path('admin/', admin.site.urls),
     url(r'^jet/', include('jet.urls', 'jet')),
 ]

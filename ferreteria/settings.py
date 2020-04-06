@@ -44,7 +44,9 @@ INSTALLED_APPS = [
     'caja',
     'proveedor',
     'venta',
-    'hr.apps.HrConfig'
+    'hr.apps.HrConfig',
+    'sslserver',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [

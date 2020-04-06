@@ -1,0 +1,112 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+{% load i18n %}
+{% block title %}Demo | FE{% endblock %}
+{% block extrahead %}
+    <link rel="stylesheet" type="text/css" href="/static/admin/css/forms.css">
+    <link rel="stylesheet" type="text/css" href="/static/estilos.css">
+    <link rel="stylesheet" type="text/css" href="/static/notifIt.min.css">
+    <script src="{% static "js/jquery-3.4.1.min.js" %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery.init.js' %} "></script>
+    <script type="text/javascript" src="{% static 'js/sweetalert2.min.js' %} "></script>
+    <script type="text/javascript" src="{% static 'js/notifIt.min.js' %} "></script>
+
+{% endblock %}
+{% block branding %}
+    <h1 id="site-name"><a href="{% url 'admin:index' %}">Ferretería Porvenir - Panel de control</a></h1>
+{% endblock %}
+{% block breadcrumbs %}
+    <div class="breadcrumbs">
+        <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a> ›
+        {% if title %} &rsaquo; {{ title }}{% endif %}
+            › Demo
+    </div>
+{% endblock %}
+{% block usertools %}
+    <div id="user-tools">
+        {% block welcome-msg %}
+            {% trans 'Bienvenido,' %}
+            <strong>{% firstof user.get_short_name user.get_username %}</strong>.
+        {% endblock %}
+        {% block userlinks %}
+            {% if site_url %}
+                <a href="{{ site_url }}">{% trans 'View site' %}</a> /
+            {% endif %}
+            {% if user.is_active and user.is_staff %}
+                {% url 'django-admindocs-docroot' as docsroot %}
+                {% if docsroot %}
+                    <a href="{{ docsroot }}">{% trans 'Documentation' %}</a> /
+                {% endif %}
+            {% endif %}
+            {% if user.has_usable_password %}
+            <a href="{% url 'admin:password_change' %}">{% trans 'Change password' %}</a> /
+            {% endif %}
+            <a href="{% url 'admin:logout' %}">{% trans 'Log out' %}</a>
+        {% endblock %}
+    </div>
+{% endblock %}
+{% block nav-global %}{% endblock %}
+    {% block messages %}
+        {% if messages %}
+        <ul class="messagelist">{% for message in messages %}
+          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message|capfirst }}</li>
+        {% endfor %}</ul>
+        {% endif %}
+    {% endblock messages %}
+{% block content %}
+     <table style="width: 100%">
+        {% csrf_token %}
+            <tbody>
+                <tr>
+                    <td>Saldo Inicial </td>
+                    <td> <input type="number" id="saldo" class="input80" >  </td>
+                </tr>
+            </tbody>
+     </table>
+
+    <div class="submit-row">
+        <input onclick="clickOK()" type="submit" class="default" value="Aceptar" style="cursor: pointer">
+    </div>
+
+
+    <script>
+        const $ = django.jQuery;
+
+        function clickOK() {
+            let saldo_inicial = $("#saldo").val();
+
+             if (saldo_inicial.length === 0){
+                   notif ({
+                       msg: "El saldo inicial no puede ser cero",
+                       type: "error",
+                       position: "center"
+                   });
+                   return;
+             }else if (saldo_inicial >= 0 ){
+                   notif ({
+                       msg: "tabien",
+                       type: "success",
+                       position: "center"
+                   });
+            }
+
+
+
+
+        }
+
+
+
+
+
+    </script>
+
+
+
+
+
+
+
+
+
+{% endblock %}

@@ -32,6 +32,8 @@ class Persona(Base):
         ("F", "Femenino"),
         ("M", "Masculino"),
     )
+    usuario = models.ForeignKey(User, related_name='%(class)s_usuario',
+                                on_delete=models.SET_NULL, null=True, blank=True)
     nombre = models.CharField(max_length=70, null=False, blank=False)
     apellido = models.CharField(max_length=70, null=False, blank=False)
     genero = models.CharField(max_length=1, null=False, blank=False,

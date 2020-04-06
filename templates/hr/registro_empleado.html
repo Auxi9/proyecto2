@@ -5,9 +5,12 @@
 {% block extrahead %}
     <link rel="stylesheet" type="text/css" href="/static/admin/css/forms.css">
     <link rel="stylesheet" type="text/css" href="/static/estilos.css">
+    <link rel="stylesheet" type="text/css" href="/static/notifIt.min.css">
     <script src="{% static "js/jquery-3.4.1.min.js" %}"></script>
     <script type="text/javascript" src="{% static 'js/jquery.init.js' %} "></script>
     <script type="text/javascript" src="{% static 'js/sweetalert2.min.js' %} "></script>
+    <script type="text/javascript" src="{% static 'js/notifIt.min.js' %} "></script>
+
 {% endblock %}
 {% block branding %}
     <h1 id="site-name"><a href="{% url 'admin:index' %}">Ferretería Porvenir - Panel de control</a></h1>
@@ -110,16 +113,23 @@
             let contrasenha = $("#con").val();
             let nombre = $("#nom").val().trim();
             let apellido = $("#ape").val().trim();
+            let genero = $("#genero").val();
             let direccion = $("#dir").val().trim();
             let ciudad = $("#ciu").val().trim();
             let telefono = $("#tel").val().trim();
             let email = $("#email").val().trim();
 
+            // Default position rigth, left, center, right, bottom
+            // success, error, warning, info
+
+
             if (username.length === 0) {
-                Sweetalert2.fire({
-                    type: 'error',
-                    title: 'Revise los datos',
-                    text: 'Debe completar el username'
+                notif ({
+                    msg: "Debe completar el usuario",
+                //color: "red",
+
+              // success, error, warning, info
+                    type: "error"
                 });
                 return;
             }else if (contrasenha.length === 0){
@@ -149,6 +159,13 @@
                     title: 'Revise los datos',
                     text: 'Debe completar el apellido'
                 });
+                return;  }
+            else if (genero.length === 0){
+                Sweetalert2.fire({
+                    type: 'error',
+                    title: 'Revise los datos',
+                    text: 'Debe completar el genero'
+                });
                 return;
             } else if (direccion.length === 0){
                 Sweetalert2.fire({
@@ -173,7 +190,6 @@
                 return;
             }
 
-
             $.ajax({
                 type: "POST",
                 dataType : "json",
@@ -186,14 +202,16 @@
                     direccion: direccion,
                     ciudad: ciudad,
                     telefono: telefono,
-                    email: email
+                    email: email,
+                    genero: genero
                 },
                 success: function (data) {
                     Sweetalert2.fire({
                           type: 'success',
                           title: 'EJECUTADO EXITOSAMENTE'
-                        })//.then((result) => {});
-
+                        }).then((result) => {
+                            window.location.href = window.location.href.split("add")[0] + data.id + "/change";
+                    });
                     hideSpin();
                 },
                 error: function (error) {

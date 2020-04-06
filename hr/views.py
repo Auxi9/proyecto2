@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
@@ -86,19 +87,38 @@ class RegistroEmpleado(APIView):
                 raise Exception("El telefono no puede ser nulo")
             email = request.data.get("email", None)
             if email is None:
-                raise Exception("La email no puede ser nulo")
+                raise Exception("El email no puede ser nulo")
+            genero = request.data.get("genero", None)
+            if genero is None:
+                raise Exception("El genero no puede ser nulo")
+
+            nuevouser = User()
+            nuevouser.username = username
+            nuevouser.set_password(contrasenha)
+            try:
+                nuevouser.save()
+            except Exception as e:
+                raise e
 
             nuevoemp = Empleado()
             nuevoemp.usuario_creacion = request.user
             nuevoemp.nombre = nombre
             nuevoemp.apellido = apellido
+            nuevoemp.username = username
+            nuevoemp.contrasenha = contrasenha
+            nuevoemp.direccion = direccion
+            nuevoemp.ciudad = ciudad
+            nuevoemp.telefono = telefono
+            nuevoemp.email = email
+            nuevoemp.genero = genero
+            nuevoemp.usuario_id = nuevouser.id
 
             try:
                 nuevoemp.save()
             except Exception as e:
                 raise e
 
-            return Response({}, status=HTTP_200_OK)
+            return Response({"id": nuevoemp.id}, status=HTTP_200_OK)
         except Exception as e:
             return Response({"error": str(e)},
                             status=HTTP_400_BAD_REQUEST)
