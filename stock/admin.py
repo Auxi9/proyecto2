@@ -8,3 +8,4 @@ class ProductoAdmin(BaseAdmin):
     search_fields = ['codigo']
     exclude = ['usuario_creacion', 'usuario_modificacion',
                'fecha_modificacion']
+

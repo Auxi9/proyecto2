@@ -26,6 +26,7 @@ from caja.admin import *
 from caja.views import *
 from proveedor.models import *
 from proveedor.admin import *
+from stock.views import *
 from venta.models import *
 from venta.admin import *
 from hr.admin import *
@@ -37,9 +38,11 @@ admin.site.site_header = "FERRETERIA PORVENIR - PANEL DE CONTROL"
 admin.site.site_title = "FERRETERIA PORVENIR"
 admin.site.index_title = "Secciones"
 admin.site.register(Producto, ProductoAdmin)
+admin.site.register(OrdenCompra, OrdenCompraAdmin)
+admin.site.register(OrdenCompraDetalle, OrdenCompraDetalleAdmin)
 admin.site.register(Cliente, ClienteAdmin)
 admin.site.register(Carrito, CarritoAdmin)
-#admin.site.register(CarritoItem, CarritoItemAdmin)
+admin.site.register(CarritoItem, CarritoItemAdmin)
 admin.site.register(Caja, CajaAdmin)
 admin.site.register(Gasto, GastoAdmin)
 admin.site.register(Movimiento, MovimientoAdmin)
@@ -54,8 +57,10 @@ admin.site.register(Empleado, EmpleadoAdmin)
 
 
 urlpatterns = [
+    url(r'^api/get_proveedores_reg_orden_compra$', get_proveedores_reg_orden_compra, name='gtroc'),
     url(r'^admin/hr/empleado/add/$', RegistroEmpleado.as_view(), name='empleado_add'),
     url(r'^admin/caja/caja/add/$', AperturaCaja.as_view(), name='caja_abrir'),
+    url(r'^admin/stock/ordencompra/add/$', RegistroOrdenCompra.as_view(), name='ordencompra_add'),
     path('admin/', admin.site.urls),
     url(r'^jet/', include('jet.urls', 'jet')),
 ]

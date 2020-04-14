@@ -1,0 +1,212 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+{% load i18n %}
+{% block title %}Añadir empleado | FE{% endblock %}
+{% block extrahead %}
+    <link rel="stylesheet" type="text/css" href="/static/admin/css/forms.css">
+    <link rel="stylesheet" type="text/css" href="/static/estilos.css">
+    <link rel="stylesheet" type="text/css" href="/static/notifIt.min.css">
+    <script src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery.init.js' %} "></script>
+    <script type="text/javascript" src="{% static 'js/sweetalert2.min.js' %} "></script>
+    <script type="text/javascript" src="{% static 'js/notifIt.min.js' %} "></script>
+{% endblock %}
+{% block branding %}
+    <h1 id="site-name"><a href="{% url 'admin:index' %}">Ferretería Porvenir - Panel de control</a></h1>
+{% endblock %}
+{% block breadcrumbs %}
+    <div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a> ›
+    <a href="/admin/hr/">Producto</a> ›
+    {% if title %} &rsaquo; {{ title }}{% endif %}
+        › Añadir Orden de Compra
+    </div>
+{% endblock %}
+{% block usertools %}
+    <div id="user-tools">
+        {% block welcome-msg %}
+            {% trans 'Bienvenido,' %}
+            <strong>{% firstof user.get_short_name user.get_username %}</strong>.
+        {% endblock %}
+        {% block userlinks %}
+            {% if site_url %}
+                <a href="{{ site_url }}">{% trans 'View site' %}</a> /
+            {% endif %}
+            {% if user.is_active and user.is_staff %}
+                {% url 'django-admindocs-docroot' as docsroot %}
+                {% if docsroot %}
+                    <a href="{{ docsroot }}">{% trans 'Documentation' %}</a> /
+                {% endif %}
+            {% endif %}
+            {% if user.has_usable_password %}
+            <a href="{% url 'admin:password_change' %}">{% trans 'Change password' %}</a> /
+            {% endif %}
+            <a href="{% url 'admin:logout' %}">{% trans 'Log out' %}</a>
+        {% endblock %}
+    </div>
+{% endblock %}
+{% block nav-global %}{% endblock %}
+    {% block messages %}
+        {% if messages %}
+        <ul class="messagelist">{% for message in messages %}
+          <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message|capfirst }}</li>
+        {% endfor %}</ul>
+        {% endif %}
+    {% endblock messages %}
+{% block content %}
+    {% csrf_token %}
+     <script>
+        const $ = django.jQuery;
+        //csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value;
+
+        var encontrados = [];
+        var proveedorSeleccionado = -1;
+
+        function cambiarProveedor(ind){
+            proveedorSeleccionado = ind;
+            $("#ruc").html(encontrados[ind].ruc);
+            $("#razon_social").html(encontrados[ind].razon_social);
+            $("#direccion").html(encontrados[ind].direccion);
+            $("#telefono").html(encontrados[ind].telefono);
+        }
+
+        function buscarProveedor(){
+
+            let busc = $("#provBus").val();
+
+            if (busc.length === 0){
+                notif ({
+                    msg: "No se encontro ningun proveedor",
+                    type: "error"
+                    });
+                return;
+            }
+
+            encontrados = [];
+            proveedorSeleccionado = -1;
+
+            // VACIAR LOS 3 LABELS DE INFO DEL PROVEEDOR
+            $("#ruc").html("");
+            $("#razon_social").html("");
+            $("#direccion").html("");
+            $("#telefono").html("");
+
+
+            $.ajax({
+                url : "/api/get_proveedores_reg_orden_compra",
+                type: "POST",
+                data : {
+                    csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                    buscado: busc
+                },
+                dataType : "json",
+                success: function(data){
+                    console.log(data.encontrados);
+
+                    let found = data.encontrados;
+                    encontrados = found;
+                    let opciones = "";
+
+                    for (let i=0; i<found.length; i++){
+                        opciones = opciones.concat('<option value="' + i + '">' + found[i].ruc + ' - '
+                            + found[i].razon_social + '</option>');
+                    }
+                    $("#contenedorProv").html('<select id="provSelec" ' +
+                        'onchange="cambiarProveedor(this.options[this.selectedIndex].value)">' + opciones + '</select>');
+
+                    // ALERTAR QUE SE ENCONTRARON COSAS O NO
+                    if (encontrados.length > 0){
+                         notif ({
+                            msg: "Seleccione un proveedor",
+                            type: "success"
+                        });
+                    }else if (encontrados.length === 0 ){
+                        $("#contenedorProv").empty();
+                         notif ({
+                            msg: "No se encontro ningun proveedor",
+                            type: "error"
+                         });
+                    }
+                },
+                error: function(error){
+                    // ALERTAR ERROR DE COMUNICACION CON EL SERVIDOR
+                }
+
+            });
+        }
+    </script>
+
+    <div>
+        <h1>Registrar nueva orden de compra</h1>
+    </div>
+    <div>
+        <h2>Datos del proveedor</h2>
+        <table style="width: 100%">
+            <tbody>
+                <tr>
+                    <td>Buscar (RUC o razón social) </td>
+                    <td>
+                        <input type="text" id="provBus"/>
+                        <input type="submit" class="defaut" value="BUSCAR" onclick="buscarProveedor()" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>Seleccionar</td>
+                    <td id="contenedorProv">
+                    </td>
+                </tr>
+                <tr>
+                    <td>RUC</td>
+                    <td><b id="ruc"></b></td>
+                </tr>
+                <tr>
+                    <td>Razón social</td>
+                    <td><b id="razon_social"></b></td>
+                </tr>
+                <tr>
+                    <td>Dirección</td>
+                    <td><b id="direccion"></b></td>
+                </tr>
+                 <tr>
+                    <td>Telefono</td>
+                    <td><b id="telefono"></b></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div>
+        <h2>Ingresar datos del producto</h2>
+        <table style="width: 100%">
+            <tbody>
+                <tr>
+                    <td>Buscar:</td>
+                    <td><select name="prodBus" id="prodBus"></select></td>
+                </tr>
+                <tr>
+                    <td>Código de barras</td>
+                    <td><input type="text" id="cod" value="837246233" readonly></td>
+                </tr>
+                <tr>
+                    <td>Denominación</td>
+                    <td><input type="text" id="den" class="input80" value="Destornillador cabeza cruz"></td>
+                </tr>
+                <tr>
+                    <td>Precio</td>
+                    <td><input type="number" id="pre" value="25000"></td>
+                    <td>Cantidad</td>
+                    <td><input type="number" id="cant" value="5"></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="submit-row" style="margin: 0">
+                            <input onclick="" type="submit" class="default" value="AGREGAR">
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+
+{% endblock %}

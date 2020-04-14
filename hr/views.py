@@ -15,45 +15,6 @@ from django.shortcuts import render, redirect
 from .models import Empleado
 
 
-class RegistrarEmpleado(APIView):
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request, format=None):
-        return render(request, 'hr/empleado_crear.html')
-
-    def post(self, request, format=None):
-        try:
-            username = request.data.get("username", None)
-            if username is None:
-                raise Exception("El nombre de usuario no puede ser nulo")
-
-            nombre = request.data.get("nombre", None)
-            if nombre is None:
-                raise Exception("El nombre no puede ser nulo")
-
-            apellido = request.data.get("apellido", None)
-            if apellido is None:
-                raise Exception("El apellido no puede ser nulo")
-
-            genero = request.data.get("genero", None)
-            if genero is None:
-                raise Exception("El genero no puede ser nulo")
-
-            telefono = request.data.get("telefono", None)
-            if telefono is None:
-                raise Exception("El telefono no puede ser nulo")
-
-            email = request.data.get("email", None)
-            if email is None:
-                raise Exception("El email no puede ser nulo")
-
-            return Response({}, status=HTTP_200_OK)
-        except Exception as e:
-            return Response({"error": str(e)},
-                            status=HTTP_400_BAD_REQUEST)
-
-
 class RegistroEmpleado(APIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated]

@@ -43,7 +43,7 @@ class CarritoItem(Base):
                                 blank=False)
     producto = models.ForeignKey(Producto,
                                 related_name='%(class)s_producto',
-                                on_delete=models.CASCADE, null=False,
+                            on_delete=models.CASCADE, null=False,
                                 blank=False)
     cantidad = models.CharField(max_length=50, null=True, blank=True)
     monto_unitario = models.BigIntegerField(null=False, blank=False, default=0)
