@@ -152,7 +152,7 @@ CSRF_COOKIE_SECURE = True
 
 #CSRF_COOKIE_DOMAIN = 'boutiquestyle-dev.herokuapp.com'
 
-CSRF_TRUSTED_ORIGINS = ['*', 'localhost:8000']
+CSRF_TRUSTED_ORIGINS = ['*']
 
 JET_DEFAULT_THEME = 'green'
 JET_THEMES = [

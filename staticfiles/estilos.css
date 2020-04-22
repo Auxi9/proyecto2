@@ -1,3 +1,19 @@
 .input80 {
     min-width: 80%;
 }
+
+.ico{
+    margin: 0 5px;
+    color: white;
+    background-color: red;
+    border: none;
+    cursor: pointer;
+}
+
+.ico:hover {
+    background-color: #ff0000d1;
+}
+
+.flex {
+    display: flex;
+}

@@ -1,0 +1,198 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+{% load i18n %}
+{% block title %}Añadir producto | FE{% endblock %}
+{% block extrahead %}
+    <link rel="stylesheet" type="text/css" href="/static/admin/css/forms.css">
+    <link rel="stylesheet" type="text/css" href="/static/estilos.css">
+    <link rel="stylesheet" type="text/css" href="/static/notifIt.min.css">
+    <script src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery.init.js' %} "></script>
+    <script type="text/javascript" src="{% static 'js/sweetalert2.min.js' %} "></script>
+    <script type="text/javascript" src="{% static 'js/notifIt.min.js' %} "></script>
+
+{% endblock %}
+{% block branding %}
+    <h1 id="site-name"><a href="{% url 'admin:index' %}">Ferretería Porvenir - Panel de control</a></h1>
+{% endblock %}
+{% block breadcrumbs %}
+    <div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a> ›
+    <a href="/admin/stock/">stock</a> ›
+    <a href="/admin/stock/producto/">Producto</a>
+         {% if title %} &rsaquo; {{ title }}{% endif %}
+        › Añadir producto
+    </div>
+{% endblock %}
+{% block usertools %}
+    <div id="user-tools">
+        {% block welcome-msg %}
+            {% trans 'Bienvenido,' %}
+            <strong>{% firstof user.get_short_name user.get_username %}</strong>.
+        {% endblock %}
+        {% block userlinks %}
+            {% if site_url %}
+                <a href="{{ site_url }}">{% trans 'View site' %}</a> /
+            {% endif %}
+            {% if user.is_active and user.is_staff %}
+                {% url 'django-admindocs-docroot' as docsroot %}
+                {% if docsroot %}
+                    <a href="{{ docsroot }}">{% trans 'Documentation' %}</a> /
+                {% endif %}
+            {% endif %}
+            {% if user.has_usable_password %}
+            <a href="{% url 'admin:password_change' %}">{% trans 'Change password' %}</a> /
+            {% endif %}
+            <a href="{% url 'admin:logout' %}">{% trans 'Log out' %}</a>
+        {% endblock %}
+    </div>
+{% endblock %}
+{% block nav-global %}{% endblock %}
+    {% block messages %}
+        {% if messages %}
+        <ul class="messagelist">{% for message in messages %}
+        <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message|capfirst }} </li>
+        {% endfor %}</ul>
+        {% endif %}
+    {% endblock messages %}
+{% block content %}
+
+    <div class="row">
+
+        <form class="col-xs-12" method="post" action="javascript:void(0)">
+            {% csrf_token %}
+            <h1 style="text-transform: uppercase">Añadir producto</h1>
+            <table style="width: 100%">
+                <tbody>
+                    <tr>
+                        <td>Código de barra</td>
+                        <td>
+                            <input type="number" id="cod_barra" autofocus
+                                   name="cod_barra">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Denominación</td>
+                        <td>
+                            <input type="text" id="denominacion"
+                                   name="denominacion" class="input80">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Precio compra</td>
+                        <td>
+                            <input type="number" id="prec_compra"
+                                   name="prec_compra" class="input80">
+                        </td>
+                    </tr>
+                     <tr>
+                        <td>Precio venta</td>
+                        <td>
+                            <input type="number" id="prec_venta"
+                                   name="prec_venta" class="input80">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Precio descuento</td>
+                        <td>
+                            <input type=number id="prec_desc"
+                                   name="prec_desc" class="input80">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Cantidad</td>
+                        <td>
+                            <input type="number" id="cantidad"
+                                   name="cantidad" class="input80">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="submit-row" style="margin: 0">
+                                <input type="submit" class="default" value="AGREGAR" onclick="datos()">
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+
+    <script>
+        const $ = django.jQuery;
+
+        function datos(){
+            let codigo_barra = $("#cod_barra").val().trim();
+            let denom= $("#denominacion").val().trim();
+            let precio_compra = $("#prec_compra").val();
+            let precio_venta = $("#prec_venta").val();
+            //let precio_descuento = $("prec_desc").val()
+            let cant = $("#cantidad").val();
+
+            if (codigo_barra <= 0){
+                notif ({
+                    msg: "Debe completar el codigo de barra",
+                    type: "error"
+                });
+                return;
+            }else if (denom.length === 0){
+                notif ({
+                    msg: "Debe completar la denominacion del producto",
+                    type: "error"
+                });
+                return;
+            }else if (precio_compra <= 0){
+                notif ({
+                    msg: "Debe completar el precio de compra",
+                    type: "error"
+                });
+                return;
+            }else if (precio_venta <= 0){
+                notif ({
+                    msg: "Debe completar el precio venta",
+                    type: "error"
+                });
+                return;
+            }else if (cant <=0 ){
+                notif ({
+                    msg: "Debe completar la cantidad",
+                    type: "error"
+                });
+                return;
+            }
+
+            $.ajax({
+            
+                type: "POST",
+                dataType : "json",
+                data: {
+                    csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                    cod_barra: codigo_barra,
+                    denominacion: denom,
+                    prec_compra: precio_compra,
+                    prec_venta: precio_venta,
+                    cantidad: cant
+                },
+                success: function (data) {
+                    Sweetalert2.fire({
+                        type: 'success',
+                        title: 'Ejecutado Exitosamente'
+                    }).then((result) => {
+                        window.location.href = window.location.href.split("add")[0];
+                    });
+                    hideSpin();
+                },
+                error: function (error) {
+                    Sweetalert2.fire({
+                          type: 'error',
+                          title: 'Error al añadir nuevo producto',
+                          text: error.responseJSON.error
+                    });
+
+                    hideSpin();
+                },
+            });
+        }
+    </script>
+
+{% endblock %}

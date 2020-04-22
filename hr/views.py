@@ -81,5 +81,4 @@ class RegistroEmpleado(APIView):
 
             return Response({"id": nuevoemp.id}, status=HTTP_200_OK)
         except Exception as e:
-            return Response({"error": str(e)},
-                            status=HTTP_400_BAD_REQUEST)
+            return Response({"error": str(e)}, status=HTTP_400_BAD_REQUEST)

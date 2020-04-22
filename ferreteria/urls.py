@@ -33,7 +33,6 @@ from hr.admin import *
 from hr.models import *
 from hr.views import *
 
-
 admin.site.site_header = "FERRETERIA PORVENIR - PANEL DE CONTROL"
 admin.site.site_title = "FERRETERIA PORVENIR"
 admin.site.index_title = "Secciones"
@@ -58,9 +57,12 @@ admin.site.register(Empleado, EmpleadoAdmin)
 
 urlpatterns = [
     url(r'^api/get_proveedores_reg_orden_compra$', get_proveedores_reg_orden_compra, name='gtroc'),
+    url(r'^api/get_producto_reg_orden_compra$', get_producto_reg_orden_compra, name='gproc'),
+    url(r'^api/RegistroProducto$', RegistroProducto, name='gpro'),
     url(r'^admin/hr/empleado/add/$', RegistroEmpleado.as_view(), name='empleado_add'),
     url(r'^admin/caja/caja/add/$', AperturaCaja.as_view(), name='caja_abrir'),
-    url(r'^admin/stock/ordencompra/add/$', RegistroOrdenCompra.as_view(), name='ordencompra_add'),
+    url(r'^admin/proveedor/ordencompra/add/$', RegistroOrdenCompra.as_view(), name='ordencompra_add'),
+    url(r'^admin/stock/producto/add/$', RegistroProducto.as_view(), name='regprod_add'),
     path('admin/', admin.site.urls),
     url(r'^jet/', include('jet.urls', 'jet')),
 ]

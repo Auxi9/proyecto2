@@ -1,7 +1,7 @@
 {% extends "admin/base_site.html" %}
 {% load static %}
 {% load i18n %}
-{% block title %}Añadir empleado | FE{% endblock %}
+{% block title %}Añadir Orden Compra | FE{% endblock %}
 {% block extrahead %}
     <link rel="stylesheet" type="text/css" href="/static/admin/css/forms.css">
     <link rel="stylesheet" type="text/css" href="/static/estilos.css">
@@ -55,6 +55,8 @@
     {% endblock messages %}
 {% block content %}
     {% csrf_token %}
+
+<!-- SECCION PROVEEDORESSSS -->
      <script>
         const $ = django.jQuery;
         //csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value;
@@ -111,6 +113,7 @@
                         opciones = opciones.concat('<option value="' + i + '">' + found[i].ruc + ' - '
                             + found[i].razon_social + '</option>');
                     }
+
                     $("#contenedorProv").html('<select id="provSelec" ' +
                         'onchange="cambiarProveedor(this.options[this.selectedIndex].value)">' + opciones + '</select>');
 
@@ -136,6 +139,169 @@
         }
     </script>
 
+    <!-- SECCION PRODUCTOSSSSSS -->
+    <script>
+        //const $ = django.jQuery;
+        //csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value;
+
+        // array de diccionarios de productos econtrados
+        var prodEncontrados = [];
+        // indice del prod seleccionado dentro de array de prodEncontrados
+        var productoSeleccionado = -1;
+
+        function cambiarProducto(ind){
+            productoSeleccionado = ind;
+            $("#cod").html(prodEncontrados[ind].codigo);
+            $("#den").html(prodEncontrados[ind].denominacion);
+            $("#pre").html(prodEncontrados[ind].precio_compra);
+            // no es un <b>, es <input>, usa val
+            $("#cant").val(prodEncontrados[ind].cant);
+        }
+
+        var listado = {};
+
+        /*
+            DIBUJA EL TABLE DE LISTADO DE PRODUCTOS
+        */
+        function dibujarListado() {
+            $("#tbodylista").empty();
+            let arrHijos = [];
+            for (let p in listado){
+                arrHijos.push('<tr><td>' + p + 
+                '</td><td>' + listado[p]["codigo"] + '</td><td>' + 
+                    listado[p]["denominacion"] + '</td><td>' + 
+                    listado[p]["precio_compra"] + '</td><td>' + 
+                    listado[p]["cantidad"]+ 
+                    '</td><td class="flex"><button title="Eliminar" class="ico" onclick="deleteProducto(' + p 
+                    + ')">&#10006;</button>' +
+                    '<button title="Incrementar Cant" class="ico" onclick="sumarCantidad(' + p 
+                    + ')">&#10010;</button>' +
+                    '<button title="Disminuir Cant" class="ico" onclick="restarCantidad(' + p 
+                    + ')">&#9473;</button></td></tr>'
+                    );
+                    
+            }
+            if (arrHijos.length === 0) {
+                arrHijos.push('<tr><td colspan="6">Sin productos.</td></tr>');
+            }
+            $("#tbodylista").html(arrHijos);         
+        }
+
+        function deleteProducto(indicado) {
+            delete listado[indicado];
+            dibujarListado();
+        }
+
+        function sumarCantidad(indicado){
+            listado[indicado]["cantidad"]++;
+            dibujarListado();
+            
+        }
+
+        function restarCantidad(indicado){
+            listado[indicado]["cantidad"]--;
+            dibujarListado();
+        }
+
+
+        function addProducto(){
+            // VALIDAR ESTO, mayor que cero siempre
+            let can = parseInt($("#cant").val());
+
+            if (can <= 0 | isNaN(can)) {
+                notif ({
+                    msg: "La cantidad debe ser mayor a cero",
+                    type: "error"
+                });
+                return; 
+            }
+
+            // el producto seleccionado es prodEncontrados[productoSeleccionado]
+            if (prodEncontrados[productoSeleccionado].id in listado) {
+                console.log("El producto está en la lista, se aumenta cantidad");
+                listado[prodEncontrados[productoSeleccionado].id]["cantidad"] += can;
+            } else {
+                console.log("Se agrega el producto a la lista");
+                listado[prodEncontrados[productoSeleccionado].id] = {
+                    "codigo": prodEncontrados[productoSeleccionado].codigo,
+                    "denominacion": prodEncontrados[productoSeleccionado].denominacion,
+                    "precio_compra": prodEncontrados[productoSeleccionado].precio_compra,
+                    "cantidad": can,
+                };
+            }
+            dibujarListado();
+            console.log(listado);
+        }
+
+        function buscarProducto(){
+
+            let buscado = $("#prodBus").val();
+
+            if (buscado.length === 0){
+                notif ({
+                    msg: "No se encontro ningun producto",
+                    type: "error"
+                });
+                return;
+            }
+
+            prodEncontrados = [];
+            productoSeleccionado = -1;
+
+            // VACIAR LOS LABELS DE INFO DEL PRODUCTO
+            $("#cod").html("");
+            $("#den").html("");
+            $("#pre").html("");
+            $("#cant").html("");
+
+             $.ajax({
+                url : "/api/get_producto_reg_orden_compra",
+                type: "POST",
+                data : {
+                    csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                     prodBus: buscado
+                },
+                dataType : "json",
+                success: function(data){
+                    console.log(data.prodEncontrados);
+
+                    let foundProd = data.prodEncontrados;
+                    prodEncontrados = foundProd;
+                    let opcionesProd = "";
+
+                    for (let i=0; i<foundProd.length; i++){
+                        opcionesProd = opcionesProd.concat('<option value="' + i + '">' + foundProd[i].codigo + ' - '
+                            + foundProd[i].denominacion + '</option>');
+                    }
+                    $("#contenedorProd").html('<select id="prodSelec" ' +
+                        'onchange="cambiarProducto(this.options[this.selectedIndex].value)">' + opcionesProd + '</select>');
+
+                    // ALERTAR QUE SE ENCONTRARON COSAS O NO
+                    if (prodEncontrados.length > 0){
+                         notif ({
+                            msg: "Seleccione un producto",
+                            type: "success"
+                        });
+                        //llamar a seleccionar el primero
+                        cambiarProducto(0);
+                    }else if (prodEncontrados.length === 0 ){
+                        $("#contenedorProd").empty();
+                         notif ({
+                            msg: "No se encontro ningun producto",
+                            type: "error"
+                         });
+                    }
+                },
+                error: function(error){
+                    // ALERTAR ERROR DE COMUNICACION CON EL SERVIDOR
+                }
+
+            });
+
+        }
+    </script>
+
+    <!-- SECCION PROVEEDORESSSS -->
     <div>
         <h1>Registrar nueva orden de compra</h1>
     </div>
@@ -174,39 +340,68 @@
             </tbody>
         </table>
     </div>
+
+    <!-- PRODUCTOOOOOOOOOOOOOOOOOOOOOOO -->
     <div>
         <h2>Ingresar datos del producto</h2>
         <table style="width: 100%">
             <tbody>
                 <tr>
                     <td>Buscar:</td>
-                    <td><select name="prodBus" id="prodBus"></select></td>
+                    <td>
+                        <input type="text" id="prodBus"/>
+                        <input type="submit" class="defaut" value="BUSCAR" onclick="buscarProducto()" />
+                    </td>
+                </tr>
+                  <tr>
+                    <td>Seleccionar</td>
+                    <td type="select" id="contenedorProd"></td>
                 </tr>
                 <tr>
                     <td>Código de barras</td>
-                    <td><input type="text" id="cod" value="837246233" readonly></td>
+                    <td><b id="cod" ></b></td>
                 </tr>
                 <tr>
                     <td>Denominación</td>
-                    <td><input type="text" id="den" class="input80" value="Destornillador cabeza cruz"></td>
+                    <td><b id="den" ></b></td>
                 </tr>
                 <tr>
                     <td>Precio</td>
-                    <td><input type="number" id="pre" value="25000"></td>
+                    <td><b id="pre" ></b></td>
                     <td>Cantidad</td>
-                    <td><input type="number" id="cant" value="5"></td>
+                    <td><input type= "number" id="cant"></td>
                 </tr>
-                <tr>
+               <tr>
                     <td>
                         <div class="submit-row" style="margin: 0">
-                            <input onclick="" type="submit" class="default" value="AGREGAR">
+                            <input onclick="addProducto()" type="submit" class="default" value="AGREGAR">
                         </div>
                     </td>
                 </tr>
             </tbody>
         </table>
     </div>
-
+    <br/>
+    <div>
+        <h2>Listado de productos agregados</h2>
+        <table style="width: 100%;">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Código de barras</th>
+                    <th>Denominación</th>
+                    <th>Precio de compra</th>
+                    <th>Cantidad</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="tbodylista">
+                <tr>
+                    <td colspan="6">Sin productos.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
 
 {% endblock %}
