@@ -21,6 +21,7 @@ class Proveedor(Base):
 
 class OrdenCompra(Base):
 
+    # id_cabecera = models.IntegerField(null=False, blank=False,  default=0)
     proveedor = models.ForeignKey(Proveedor,
                                 related_name='%(class)s_proveedor',
                                 on_delete=models.CASCADE, null=False,
@@ -34,12 +35,14 @@ class OrdenCompra(Base):
 
 class OrdenCompraDetalle(Base):
 
+    cabecera = models.ForeignKey(OrdenCompra,  related_name='%(class)s_ordencompra',
+                                on_delete=models.SET_NULL, null=True, blank=True)
     existente = models.ForeignKey(Producto,
                                 related_name='%(class)s_producto',
                                 on_delete=models.SET_NULL, null=True,
                                 blank=True)
-    codigo = models.IntegerField(null=False, blank=False,  default=0)
-    denominacion = models.CharField(max_length=80, null=False, blank=False, default=0)
+    #codigo = models.IntegerField(null=False, blank=False,  default=0)
+    #denominacion = models.CharField(max_length=80, null=False, blank=False, default=0)
     precio_compra = models.BigIntegerField(null=False, blank=False, default=0,
                                            verbose_name='Precio de compra')
     cantidad = models.IntegerField(null=False, blank=False,  default=0)

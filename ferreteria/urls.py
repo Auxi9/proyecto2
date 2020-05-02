@@ -62,6 +62,7 @@ urlpatterns = [
     url(r'^admin/hr/empleado/add/$', RegistroEmpleado.as_view(), name='empleado_add'),
     url(r'^admin/caja/caja/add/$', AperturaCaja.as_view(), name='caja_abrir'),
     url(r'^admin/proveedor/ordencompra/add/$', RegistroOrdenCompra.as_view(), name='ordencompra_add'),
+    url(r'^admin/proveedor/ordencompra/ver_orden$', ver_detalle_orden_compra, name='doc'),
     url(r'^admin/stock/producto/add/$', RegistroProducto.as_view(), name='regprod_add'),
     path('admin/', admin.site.urls),
     url(r'^jet/', include('jet.urls', 'jet')),

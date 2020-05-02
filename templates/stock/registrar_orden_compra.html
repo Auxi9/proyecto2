@@ -118,23 +118,30 @@
                         'onchange="cambiarProveedor(this.options[this.selectedIndex].value)">' + opciones + '</select>');
 
                     // ALERTAR QUE SE ENCONTRARON COSAS O NO
-                    if (encontrados.length > 0){
+                    if (encontrados.length > 1){
                          notif ({
                             msg: "Seleccione un proveedor",
                             type: "success"
                         });
+                        cambiarProveedor(0);
                     }else if (encontrados.length === 0 ){
                         $("#contenedorProv").empty();
                          notif ({
                             msg: "No se encontro ningun proveedor",
                             type: "error"
                          });
+                    }else if (encontrados.length === 1 ){
+                        cambiarProveedor(0);
                     }
                 },
                 error: function(error){
-                    // ALERTAR ERROR DE COMUNICACION CON EL SERVIDOR
-                }
-
+                    Sweetalert2.fire({
+                          type: 'error',
+                          title: 'Error al añadir un proveedor',
+                          text: error.responseJSON.error
+                    });
+                    hideSpin();
+                },
             });
         }
     </script>
@@ -158,7 +165,21 @@
             $("#cant").val(prodEncontrados[ind].cant);
         }
 
+        // listado de productos agregados a la OC 
+        // variable usada para dibujar tabla de productos
         var listado = {};
+
+        /*
+            formato de item en listado
+            listado =  {
+                "4": {
+                    "denominacion": --,
+                    "precio_compra": --,
+                    "codigo": --,
+                    "id": --
+                }
+            }
+        */
 
         /*
             DIBUJA EL TABLE DE LISTADO DE PRODUCTOS
@@ -277,7 +298,7 @@
                         'onchange="cambiarProducto(this.options[this.selectedIndex].value)">' + opcionesProd + '</select>');
 
                     // ALERTAR QUE SE ENCONTRARON COSAS O NO
-                    if (prodEncontrados.length > 0){
+                    if (prodEncontrados.length > 1 ){
                          notif ({
                             msg: "Seleccione un producto",
                             type: "success"
@@ -290,6 +311,8 @@
                             msg: "No se encontro ningun producto",
                             type: "error"
                          });
+                    }else if (prodEncontrados.length === 1){
+                        cambiarProducto(0);
                     }
                 },
                 error: function(error){
@@ -299,6 +322,62 @@
             });
 
         }
+    </script>
+
+ <!-- REGISTRAR LA ORDER DE COMPRA  -->
+    <script>
+        //poner llamada ajax en funcion que se ejecuta con ONCLICK del boton
+        //antes de invocar ajax verificar si listado.length
+
+        function RegistrarOrdCompra(){
+
+        
+            if (listado.length === 0 ){
+                notif ({
+                    msg: "El listado se encuentra vacio",
+                    type: "error"
+                });
+                return;
+            }
+
+            if (proveedorSeleccionado.length ===0){
+                notif ({
+                    msg: "Seleccionar un proveedor",
+                    type: "error"
+                });
+                return;
+            }
+
+            $.ajax({
+                type: "POST",
+                data : {
+                    csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                    lista_productos: JSON.stringify(listado),
+                    proveedor: encontrados[proveedorSeleccionado].id,
+                },
+                dataType: "json",
+                success: function(data){
+                    Sweetalert2.fire({
+                        type: 'success',
+                        title: 'Ejucutado Exitosamente',
+                    }).then((result) => {
+                        window.location.href = window.location.href.split("add")[0];
+                    });
+                    hideSpin();
+
+                },
+                error: function(error){
+                    Sweetalert2.fire({
+                        type: 'error',
+                        title: 'Revise los datos',
+                        text: error.responseJSON.error
+                    });
+                    hideSpin();
+                }
+            });
+        }
+
+                
     </script>
 
     <!-- SECCION PROVEEDORESSSS -->
@@ -353,7 +432,7 @@
                         <input type="submit" class="defaut" value="BUSCAR" onclick="buscarProducto()" />
                     </td>
                 </tr>
-                  <tr>
+                <tr>
                     <td>Seleccionar</td>
                     <td type="select" id="contenedorProd"></td>
                 </tr>
@@ -400,7 +479,18 @@
                     <td colspan="6">Sin productos.</td>
                 </tr>
             </tbody>
+            <div>
+              <tr>
+                    <td>
+                        <div class="submit-row" style="margin: 0">
+                            <input onclick="RegistrarOrdCompra()" type="submit" class="default" value="ENVIAR">
+                        </div>
+                    </td>
+                </tr>
+            </div>
+
         </table>
+        <div>
     </div>
 
 

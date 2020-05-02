@@ -1,0 +1,104 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+{% load i18n %}
+{% block title %}Detalle Orden de Compra | FE{% endblock %}
+{% block extrahead %}
+    <link rel="stylesheet" type="text/css" href="/static/admin/css/forms.css">
+    <link rel="stylesheet" type="text/css" href="/static/estilos.css">
+    <link rel="stylesheet" type="text/css" href="/static/notifIt.min.css">
+    <script src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery.init.js' %} "></script>
+    <script type="text/javascript" src="{% static 'js/sweetalert2.min.js' %} "></script>
+    <script type="text/javascript" src="{% static 'js/notifIt.min.js' %} "></script>
+
+{% endblock %}
+{% block branding %}
+    <h1 id="site-name"><a href="{% url 'admin:index' %}">Ferretería Porvenir - Panel de control</a></h1>
+{% endblock %}
+{% block breadcrumbs %}
+    <div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a> ›
+    <a href="/admin/proveedor/">proveedor</a> ›
+    <a href="/admin/stock/ordencompra/"> no se que poner  </a>
+         {% if title %} &rsaquo; {{ title }}{% endif %}
+        › Detalle Orden de Compra
+    </div>
+{% endblock %}
+{% block usertools %}
+    <div id="user-tools">
+        {% block welcome-msg %}
+            {% trans 'Bienvenido,' %}
+            <strong>{% firstof user.get_short_name user.get_username %}</strong>.
+        {% endblock %}
+        {% block userlinks %}
+            {% if site_url %}
+                <a href="{{ site_url }}">{% trans 'View site' %}</a> /
+            {% endif %}
+            {% if user.is_active and user.is_staff %}
+                {% url 'django-admindocs-docroot' as docsroot %}
+                {% if docsroot %}
+                    <a href="{{ docsroot }}">{% trans 'Documentation' %}</a> /
+                {% endif %}
+            {% endif %}
+            {% if user.has_usable_password %}
+            <a href="{% url 'admin:password_change' %}">{% trans 'Change password' %}</a> /
+            {% endif %}
+            <a href="{% url 'admin:logout' %}">{% trans 'Log out' %}</a>
+        {% endblock %}
+    </div>
+{% endblock %}
+{% block nav-global %}{% endblock %}
+    {% block messages %}
+        {% if messages %}
+        <ul class="messagelist">{% for message in messages %}
+        <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message|capfirst }} </li>
+        {% endfor %}</ul>
+        {% endif %}
+    {% endblock messages %}
+{% block content %}
+
+    <div class="row">
+        <form class="col-xs-12" method="post" action="javascript:void(0)">
+            {% csrf_token %}
+            <h1 style="text-transform: uppercase">Detalle Orden Compra</h1>
+            <div style="background-color:white" >
+                <h2> -RUC:{{ cabecera.proveedor.ruc }} </h2>
+                <h2> -Proveedor: {{ cabecera.proveedor.razon_social }} </h2>
+                <h2> -Direccion: {{ cabecera.proveedor.direccion }}   </h2>
+                <h2> -Telefono: {{ cabecera.proveedor.telefono }}     </h2>
+                <h2> -Fecha de Creacion: {{ cabecera.fecha_creacion }}</h2>
+            </div>
+            <br></br>
+            <h1 style="text-transform: uppercase">Productos</h1>
+            
+            <table style="width: 100%">
+                <tbody>
+                    <tr>
+                        <td> Código de barra </td>
+                        <td>Denominacion</td>
+                        <td>Precio Compra</td>
+                        <td>Cantidad</td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+            <div>
+                <table> 
+                    <tr>
+                        <td>
+                            <div class="submit-row" style="margin: 0">
+                                <input onclick="" type="submit" class="default" value="Cancelar">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="submit-row" style="margin: 0">
+                                <input onclick="" type="submit" class="default" value="Afectar">
+                            </div>
+                        </td>
+                    </tr>
+                </table>      
+            </div>   
+        </form>
+    </div>
+
+{% endblock %}
