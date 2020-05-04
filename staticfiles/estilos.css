@@ -17,3 +17,12 @@
 .flex {
     display: flex;
 }
+
+.h2{
+    margin: 15px 5px 5px 10px;
+    width: 30%;
+}
+
+.h1{
+    margin: 15px 10px;
+}

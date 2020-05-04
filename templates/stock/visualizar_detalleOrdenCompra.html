@@ -19,7 +19,7 @@
     <div class="breadcrumbs">
     <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a> ›
     <a href="/admin/proveedor/">proveedor</a> ›
-    <a href="/admin/stock/ordencompra/"> no se que poner  </a>
+    <a href="/admin/proveedor/ordencompra/"> orden de compra  </a>
          {% if title %} &rsaquo; {{ title }}{% endif %}
         › Detalle Orden de Compra
     </div>
@@ -62,26 +62,57 @@
             {% csrf_token %}
             <h1 style="text-transform: uppercase">Detalle Orden Compra</h1>
             <div style="background-color:white" >
-                <h2> -RUC:{{ cabecera.proveedor.ruc }} </h2>
-                <h2> -Proveedor: {{ cabecera.proveedor.razon_social }} </h2>
-                <h2> -Direccion: {{ cabecera.proveedor.direccion }}   </h2>
-                <h2> -Telefono: {{ cabecera.proveedor.telefono }}     </h2>
-                <h2> -Fecha de Creacion: {{ cabecera.fecha_creacion }}</h2>
+                <div class= "flex">
+                    <h2 class="h2"> RUC: </h2>
+                    <h1 class="h1"> {{ cabecera.proveedor.ruc }} </h1>
+                </div>
+                <div class= "flex">
+                    <h2 class="h2"> Proveedor: </h2>
+                    <h1 class="h1"> {{ cabecera.proveedor.razon_social }} </h1>
+                </div>
+                <div class= "flex">
+                    <h2 class="h2"> Direccion: </h2>
+                    <h1 class="h1" > {{ cabecera.proveedor.direccion }} </h1>
+                </div>
+                <div class= "flex">
+                    <h2 class="h2"> Telefono: </h2>
+                    <h1 class="h1"> 
+                        {% if cabecera.proveedor.telefono != None %}
+                        cabecera.proveedor.telefono
+                        {% else %}
+                            -
+                        {% endif %}
+                    </h1>
+                </div>
+                <div class= "flex">
+                    <h2 class="h2"> Fecha de Creacion: </h2>
+                    <h1 class="h1" > {{ cabecera.fecha_creacion }} </h1>
+                </div>
             </div>
             <br></br>
             <h1 style="text-transform: uppercase">Productos</h1>
             
             <table style="width: 100%">
-                <tbody>
+                <thead>
                     <tr>
-                        <td> Código de barra </td>
-                        <td>Denominacion</td>
-                        <td>Precio Compra</td>
-                        <td>Cantidad</td>
+                        <th>Código de barra </th>
+                        <th>Denominacion</th>
+                        <th>Precio Compra</th>
+                        <th>Cantidad</th>
                     </tr>
-                    
+                </thead>
+                <tbody>
+                    {% for d in detalles %}
+                        <tr>
+                            <td>{{ d.existente.codigo }}</td>
+                            <td>{{ d.existente.denominacion }}</td>
+                            <td>{{ d.precio_compra }}</td>
+                            <td>{{ d.cantidad }}</td>
+                        </tr>
+                    {% endfor %}
                 </tbody>
             </table>
+            <br/>
             <div>
                 <table> 
                     <tr>

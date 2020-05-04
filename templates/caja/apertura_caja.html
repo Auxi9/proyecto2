@@ -54,42 +54,78 @@
         {% endif %}
     {% endblock messages %}
 {% block content %}
-     <table style="width: 100%">
+  <!--   <table style="width: 100%"> -->
         {% csrf_token %}
-            <tbody>
-                <tr>
-                    <td>Saldo Inicial </td>
-                    <td> <input type="number" id="saldo" class="input80" >  </td>
-                </tr>
-            </tbody>
-     </table>
+        <form class="col-xs-12" method="post" action="javascript:void(0)"></form>
+            <div>
+                <h1 style="text-transform: uppercase">Saldo inicial del dia</h1>
+                    <div style="background-color:white">  
+                        <br>
+                        <label class="required" for="caja_id">Saldo Inicial</label>
+                        <input type="number" id="saldo" >
+                        <br>
+                        <br>
+                       
+                    </div>
+            <div>
+        </form>
 
     <div class="submit-row">
         <input onclick="clickOK()" type="submit" class="default" value="Aceptar" style="cursor: pointer">
     </div>
 
-
     <script>
         const $ = django.jQuery;
 
         function clickOK() {
-            let saldo_inicial = $("#saldo").val();
+            let saldo_inicial = parseInt($("#saldo").val());
 
-             if (saldo_inicial.length === 0){
-                   notif ({
-                       msg: "El saldo inicial no puede ser cero",
-                       type: "error",
-                       position: "center"
-                   });
-                   return;
-             }else if (saldo_inicial >= 0 ){
-                   notif ({
-                       msg: "Correcto",
-                       type: "success",
-                       position: "center"
-                   });
+            if (saldo_inicial <= 0 |  isNaN(saldo_inicial)){
+                notif ({
+                    msg: "El saldo inicial no puede ser cero",
+                    type: "error",
+                    position: "center"
+                });
+            }else if (saldo_inicial >= 0 ){
+               
             }
+            
+            $.ajax({
+                type: "POST",
+                dataType : "json",
+                data : {
+                    csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                    saldoInicial: saldo_inicial
+                },
+                success: function(data){
+                    Sweetalert2.fire({
+                        type: 'success',
+                        title: 'Ejucutado Exitosamente',
+                    }).then((result) => {
+                        window.location.href = window.location.href.split("add")[0];
+                    });
+                    hideSpin();
+
+                },
+                error: function(error){
+                    Sweetalert2.fire({
+                        type: 'error',
+                        title: 'Revise los datos',
+                        text: error.responseJSON.error
+                    });
+                    hideSpin();
+                }
+            });
+
+
+
+
+
         }
+
+
+
+
     </script>
 
 
